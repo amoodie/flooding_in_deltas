@@ -146,7 +146,6 @@ def update(val):
     [ overTable._cells[(c, 2)]._text.set_text(str(ObRK)) 
         for c, ObRK in zip(np.arange(1,6), 
         H[RKidxs]+eta[RKidxs] > eta[RKidxs]+zed[RKidxs]) ] # insert flow depth values
-
     fig.canvas.draw_idle()
 
 
