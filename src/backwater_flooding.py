@@ -67,6 +67,8 @@ plt.xlim(L/1000*0.25, L/1000-(L/1000*0.125))
 
 
 # add plot elements
+RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)), np.tile(np.array([-50, 100]), 
+                  (np.size(RKs), 1)).transpose(), lw=1.5, color='grey')
 eta_line, = plt.plot(x/1000, eta, lw=2, color='black') # plot bed
 zed_line = plt.plot(x[:mouIdx]/1000, eta[:mouIdx]+zed[:mouIdx], 'k--', lw=1.2) # plot levee
 water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial condition
