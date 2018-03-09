@@ -29,6 +29,8 @@ mouIdx = int(mou*nx)
 thet = 2 # plume spreading angle
 RKs = np.array([0, 165, 368, 425, 505])
 RKidxs = np.int_( (nx*mou) - np.round(RKs*1000/dx) )
+RKnames = ['Head of Passes (RK 0)', 'New Orleans (RK 165)', 'Baton Rouge (RK 368)',
+           'St. Francisville (RK 425)', 'Old River Diversion (RK 505)']
 
 B0 = 1100 # basic channel width
 B = channel.set_B(B0, mou, thet, nx, dx) # channel width
@@ -67,9 +69,19 @@ plt.xlim(L/1000*0.25, L/1000-(L/1000*0.125))
 
 
 # add plot elements
+RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)), 
+                   np.tile(np.array([-50, 100]), (np.size(RKs), 1)).transpose(), 
+                   ls=':', lw=1.5, color='grey')
 eta_line, = plt.plot(x/1000, eta, lw=2, color='black') # plot bed
 zed_line = plt.plot(x[:mouIdx]/1000, eta[:mouIdx]+zed[:mouIdx], 'k--', lw=1.2) # plot levee
 water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial condition
+# RK_labels = plt.text(np.tile(L/1000*mou - RKs, (2, 1)), 
+#                      np.tile(np.array([-40]),np.size(RKs)),
+#                      )
+RK_labels = [plt.text(x, y, '< '+s, backgroundcolor='white') 
+                               for x, y, s in zip(L/1000*mou - RKs + 6, 
+                               [40, 50, 70, 80, 90], # 85-np.arange(0,np.size(RKs))*5 
+                               RKnames)]
 ax.set_prop_cycle(plt.cycler('color', ['green', 'gold', 'red']))
 nitt_water_line = plt.plot(np.tile((L/1000*mou - np.array(nitt_water.RK)).transpose(), (1,3)),
                            nitt_water.seldata, lw=1.5)
@@ -80,9 +92,11 @@ for l in nitt_water_line:
 nitt_water_legend.set_visible(False)
 nitt_bed_line, = plt.plot(L/1000*mou - nitt_bed.data[:,0], nitt_bed.data[:,1],
                          '.', color='grey', visible=False)
-Qw_val = plt.text(0.7, 0.9, "Qw = " + utils.format_number(Qw), transform=ax.transAxes)
+Qw_val = plt.text(0.65, 0.85, "Qw = " + utils.format_number(Qw),
+                  fontsize=16, transform=ax.transAxes, 
+                  backgroundcolor='white')
 Bw_val = plt.text(( (Xs[1]-Xs[0])/4 + Xs[0])/1000, 52, \
-    "backwater from \n" + "RK " + str(L*mou/1000-round(Xs[0]/1000)) + " to " + str(L*mou/1000-round(Xs[1]/1000)), \
+    "backwater from \n" + "RK " + str(int(L*mou/1000-Xs[0]/1000)) + " to " + str(int(L*mou/1000-Xs[1]/1000)), \
     horizontalalignment="center", backgroundcolor="white")
 Bw_brack, = plt.plot(np.array([Xs[0], Xs[0], Xs[1], Xs[1]])/1000, np.array([36, 40, 40, 36]), 'k-', lw=1.2)
 
@@ -99,29 +113,28 @@ ax_overTable = plt.axes([0.20, 0.1, 0.5, 0.1], frameon=False, xticks=[], yticks=
 tabData = [['0', '0', False], ['0', '0', False],
            ['0', '0', False], ['0', '0', False],
            ['0', '0', False]];
-tabRowName = ['Head of Passes (RK 0)', 'New Orleans (RK 165)', 'Baton Rouge (RK 368)',
-              'St. Francisville (RK 425)', 'Old River Diversion (RK 505)']
+tabRowName = RKnames
 tabColName = ['flow depth (m)', 'stage (m)', 'over levee?'];
 overTable = plt.table(cellText=tabData, rowLabels=tabRowName,
                       colLabels=tabColName, colWidths=[0.3, 0.2, 0.2],
                       loc="center")
 overTable.scale(1, 1.5) # xscale, yscale
-[ overTable._cells[(c, 0)]._text.set_text(utils.format_table(HRK)) 
+[ overTable._cells[(c, 0)]._text.set_text(utils.format_table(HRK))
     for c, HRK in zip(np.arange(1,6), H[RKidxs]) ] # insert flow depth values
-[ overTable._cells[(c, 1)]._text.set_text(utils.format_table(StRK)) 
+[ overTable._cells[(c, 1)]._text.set_text(utils.format_table(StRK))
     for c, StRK in zip(np.arange(1,6), H[RKidxs]+eta[RKidxs]) ] # insert stage values
-[ overTable._cells[(c, 2)]._text.set_text(str(ObRK)) 
+[ overTable._cells[(c, 2)]._text.set_text(str(ObRK))
     for c, ObRK in zip(np.arange(1,6), 
     H[RKidxs]+eta[RKidxs] > eta[RKidxs]+zed[RKidxs]) ] # insert flow depth values
     
 
 # add gui buttons
-chk_data_ax = plt.axes([0.7, 0.3, 0.15, 0.15], facecolor=background_color)
+chk_data_ax = plt.axes([0.75, 0.25, 0.15, 0.15], facecolor=background_color)
 chk_data_dict = {'show water lines':'wl', 'show thalweg':'tw'}
 chk_data = widget.CheckButtons(chk_data_ax, chk_data_dict,
                                             (False, False))
 
-btn_reset_ax = plt.axes([0.8, 0.01, 0.1, 0.04])
+btn_reset_ax = plt.axes([0.75, 0.1, 0.1, 0.04])
 btn_reset = widget.Button(btn_reset_ax, 'Reset', color=widget_color, hovercolor='0.975')
 
 
@@ -133,8 +146,8 @@ def update(val):
     
     water_line.set_ydata(eta+H)
     Qw_val.set_text("Qw = " + utils.format_number(Qw))
-    Bw_val.set_text("backwater from \n" + "RK " + str(L*mou/1000-round(Xs[0]/1000)) + \
-        " to " + str(L*mou/1000-round(Xs[1]/1000)))
+    Bw_val.set_text("backwater from \n" + "RK " + str(int(L*mou/1000-Xs[0]/1000)) + \
+        " to " + str(int(L*mou/1000-Xs[1]/1000)))
     Bw_val.set_x(((Xs[1]-Xs[0])/4 + Xs[0])/1000)
     Bw_brack.set_xdata(np.array([Xs[0], Xs[0], Xs[1], Xs[1]])/1000)
 

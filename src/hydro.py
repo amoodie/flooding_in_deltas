@@ -29,8 +29,6 @@ def get_dHdx_dBdx(S_loc, Cf, Frsq, H_loc, B_loc, dBdx):
 def get_froude(Qw, H, B):
     g = 9.81 # gravitational acceleration constant
     Frsq = ( Qw**2 / (g * B**2 * H**3) )
-    # if Frsq == 0
-    #     print("Frsq == 0")
     return Frsq
 
 def find_backwaterregion(H, dx):
