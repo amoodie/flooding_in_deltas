@@ -95,7 +95,7 @@ Qw_val = plt.text(0.65, 0.85, "Qw = " + utils.format_number(Qw),
                   fontsize=16, transform=ax.transAxes, 
                   backgroundcolor='white')
 Bw_val = plt.text(( (Xs[1]-Xs[0])/4 + Xs[0])/1000, 52, \
-    "backwater from \n" + "RK " + str(L*mou/1000-round(Xs[0]/1000)) + " to " + str(L*mou/1000-round(Xs[1]/1000)), \
+    "backwater from \n" + "RK " + str(int(L*mou/1000-Xs[0]/1000)) + " to " + str(int(L*mou/1000-Xs[1]/1000)), \
     horizontalalignment="center", backgroundcolor="white")
 Bw_brack, = plt.plot(np.array([Xs[0], Xs[0], Xs[1], Xs[1]])/1000, np.array([36, 40, 40, 36]), 'k-', lw=1.2)
 
@@ -145,8 +145,8 @@ def update(val):
     
     water_line.set_ydata(eta+H)
     Qw_val.set_text("Qw = " + utils.format_number(Qw))
-    Bw_val.set_text("backwater from \n" + "RK " + str(L*mou/1000-round(Xs[0]/1000)) + \
-        " to " + str(L*mou/1000-round(Xs[1]/1000)))
+    Bw_val.set_text("backwater from \n" + "RK " + str(int(L*mou/1000-Xs[0]/1000)) + \
+        " to " + str(int(L*mou/1000-Xs[1]/1000)))
     Bw_val.set_x(((Xs[1]-Xs[0])/4 + Xs[0])/1000)
     Bw_brack.set_xdata(np.array([Xs[0], Xs[0], Xs[1], Xs[1]])/1000)
 
