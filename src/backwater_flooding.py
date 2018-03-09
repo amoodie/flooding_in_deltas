@@ -78,9 +78,9 @@ water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial conditi
 # RK_labels = plt.text(np.tile(L/1000*mou - RKs, (2, 1)), 
 #                      np.tile(np.array([-40]),np.size(RKs)),
 #                      )
-[plt.text(x, y, s) for x, y, s in zip(L/1000*mou - RKs, 
-                                      85-np.arange(0,np.size(RKs))*5, 
-                                      RKnames)]
+RK_labels = [plt.text(x, y, s) for x, y, s in zip(L/1000*mou - RKs + 10, 
+                               [40, 50, 60, 70, 80], # 85-np.arange(0,np.size(RKs))*5 
+                               RKnames)]
 ax.set_prop_cycle(plt.cycler('color', ['green', 'gold', 'red']))
 nitt_water_line = plt.plot(np.tile((L/1000*mou - np.array(nitt_water.RK)).transpose(), (1,3)),
                            nitt_water.seldata, lw=1.5)
@@ -118,22 +118,22 @@ overTable = plt.table(cellText=tabData, rowLabels=tabRowName,
                       colLabels=tabColName, colWidths=[0.3, 0.2, 0.2],
                       loc="center")
 overTable.scale(1, 1.5) # xscale, yscale
-[ overTable._cells[(c, 0)]._text.set_text(utils.format_table(HRK)) 
+[ overTable._cells[(c, 0)]._text.set_text(utils.format_table(HRK))
     for c, HRK in zip(np.arange(1,6), H[RKidxs]) ] # insert flow depth values
-[ overTable._cells[(c, 1)]._text.set_text(utils.format_table(StRK)) 
+[ overTable._cells[(c, 1)]._text.set_text(utils.format_table(StRK))
     for c, StRK in zip(np.arange(1,6), H[RKidxs]+eta[RKidxs]) ] # insert stage values
-[ overTable._cells[(c, 2)]._text.set_text(str(ObRK)) 
+[ overTable._cells[(c, 2)]._text.set_text(str(ObRK))
     for c, ObRK in zip(np.arange(1,6), 
     H[RKidxs]+eta[RKidxs] > eta[RKidxs]+zed[RKidxs]) ] # insert flow depth values
     
 
 # add gui buttons
-chk_data_ax = plt.axes([0.7, 0.3, 0.15, 0.15], facecolor=background_color)
+chk_data_ax = plt.axes([0.75, 0.25, 0.15, 0.15], facecolor=background_color)
 chk_data_dict = {'show water lines':'wl', 'show thalweg':'tw'}
 chk_data = widget.CheckButtons(chk_data_ax, chk_data_dict,
                                             (False, False))
 
-btn_reset_ax = plt.axes([0.8, 0.01, 0.1, 0.04])
+btn_reset_ax = plt.axes([0.75, 0.1, 0.1, 0.04])
 btn_reset = widget.Button(btn_reset_ax, 'Reset', color=widget_color, hovercolor='0.975')
 
 
