@@ -67,11 +67,18 @@ plt.xlim(L/1000*0.25, L/1000-(L/1000*0.125))
 
 
 # add plot elements
-RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)), np.tile(np.array([-50, 100]), 
-                  (np.size(RKs), 1)).transpose(), ls=':', lw=1.5, color='grey')
+RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)), 
+                   np.tile(np.array([-50, 100]), (np.size(RKs), 1)).transpose(), 
+                   ls=':', lw=1.5, color='grey')
 eta_line, = plt.plot(x/1000, eta, lw=2, color='black') # plot bed
 zed_line = plt.plot(x[:mouIdx]/1000, eta[:mouIdx]+zed[:mouIdx], 'k--', lw=1.2) # plot levee
 water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial condition
+# RK_labels = plt.text(np.tile(L/1000*mou - RKs, (2, 1)), 
+#                      np.tile(np.array([-40]),np.size(RKs)),
+#                      ['Head of Passes (RK 0)', 'New Orleans (RK 165)', 
+#                       'Baton Rouge (RK 368)', 'St. Francisville (RK 425)', 
+#                       'Old River Diversion (RK 505)'])
+# plt.text(500, 0, 'string1')
 ax.set_prop_cycle(plt.cycler('color', ['green', 'gold', 'red']))
 nitt_water_line = plt.plot(np.tile((L/1000*mou - np.array(nitt_water.RK)).transpose(), (1,3)),
                            nitt_water.seldata, lw=1.5)
@@ -84,7 +91,7 @@ nitt_bed_line, = plt.plot(L/1000*mou - nitt_bed.data[:,0], nitt_bed.data[:,1],
                          '.', color='grey', visible=False)
 Qw_val = plt.text(0.65, 0.85, "Qw = " + utils.format_number(Qw),
                   fontsize=16, transform=ax.transAxes, 
-                  bbox=dict(facecolor='white'))
+                  backgroundcolor='white')
 Bw_val = plt.text(( (Xs[1]-Xs[0])/4 + Xs[0])/1000, 52, \
     "backwater from \n" + "RK " + str(L*mou/1000-round(Xs[0]/1000)) + " to " + str(L*mou/1000-round(Xs[1]/1000)), \
     horizontalalignment="center", backgroundcolor="white")
