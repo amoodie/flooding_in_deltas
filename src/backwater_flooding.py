@@ -29,6 +29,8 @@ mouIdx = int(mou*nx)
 thet = 2 # plume spreading angle
 RKs = np.array([0, 165, 368, 425, 505])
 RKidxs = np.int_( (nx*mou) - np.round(RKs*1000/dx) )
+RKnames = ['Head of Passes (RK 0)', 'New Orleans (RK 165)', 'Baton Rouge (RK 368)',
+           'St. Francisville (RK 425)', 'Old River Diversion (RK 505)']
 
 B0 = 1100 # basic channel width
 B = channel.set_B(B0, mou, thet, nx, dx) # channel width
@@ -75,10 +77,10 @@ zed_line = plt.plot(x[:mouIdx]/1000, eta[:mouIdx]+zed[:mouIdx], 'k--', lw=1.2) #
 water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial condition
 # RK_labels = plt.text(np.tile(L/1000*mou - RKs, (2, 1)), 
 #                      np.tile(np.array([-40]),np.size(RKs)),
-#                      ['Head of Passes (RK 0)', 'New Orleans (RK 165)', 
-#                       'Baton Rouge (RK 368)', 'St. Francisville (RK 425)', 
-#                       'Old River Diversion (RK 505)'])
-# plt.text(500, 0, 'string1')
+#                      )
+[plt.text(x, y, s) for x, y, s in zip(L/1000*mou - RKs, 
+                                      85-np.arange(0,np.size(RKs))*5, 
+                                      RKnames)]
 ax.set_prop_cycle(plt.cycler('color', ['green', 'gold', 'red']))
 nitt_water_line = plt.plot(np.tile((L/1000*mou - np.array(nitt_water.RK)).transpose(), (1,3)),
                            nitt_water.seldata, lw=1.5)
@@ -110,8 +112,7 @@ ax_overTable = plt.axes([0.20, 0.1, 0.5, 0.1], frameon=False, xticks=[], yticks=
 tabData = [['0', '0', False], ['0', '0', False],
            ['0', '0', False], ['0', '0', False],
            ['0', '0', False]];
-tabRowName = ['Head of Passes (RK 0)', 'New Orleans (RK 165)', 'Baton Rouge (RK 368)',
-              'St. Francisville (RK 425)', 'Old River Diversion (RK 505)']
+tabRowName = RKnames
 tabColName = ['flow depth (m)', 'stage (m)', 'over levee?'];
 overTable = plt.table(cellText=tabData, rowLabels=tabRowName,
                       colLabels=tabColName, colWidths=[0.3, 0.2, 0.2],
