@@ -78,8 +78,9 @@ water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial conditi
 # RK_labels = plt.text(np.tile(L/1000*mou - RKs, (2, 1)), 
 #                      np.tile(np.array([-40]),np.size(RKs)),
 #                      )
-RK_labels = [plt.text(x, y, s) for x, y, s in zip(L/1000*mou - RKs + 10, 
-                               [40, 50, 60, 70, 80], # 85-np.arange(0,np.size(RKs))*5 
+RK_labels = [plt.text(x, y, '< '+s, backgroundcolor='white') 
+                               for x, y, s in zip(L/1000*mou - RKs + 6, 
+                               [40, 50, 70, 80, 90], # 85-np.arange(0,np.size(RKs))*5 
                                RKnames)]
 ax.set_prop_cycle(plt.cycler('color', ['green', 'gold', 'red']))
 nitt_water_line = plt.plot(np.tile((L/1000*mou - np.array(nitt_water.RK)).transpose(), (1,3)),
