@@ -68,7 +68,7 @@ plt.xlim(L/1000*0.25, L/1000-(L/1000*0.125))
 
 # add plot elements
 RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)), np.tile(np.array([-50, 100]), 
-                  (np.size(RKs), 1)).transpose(), lw=1.5, color='grey')
+                  (np.size(RKs), 1)).transpose(), ls=':', lw=1.5, color='grey')
 eta_line, = plt.plot(x/1000, eta, lw=2, color='black') # plot bed
 zed_line = plt.plot(x[:mouIdx]/1000, eta[:mouIdx]+zed[:mouIdx], 'k--', lw=1.2) # plot levee
 water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial condition
@@ -82,7 +82,9 @@ for l in nitt_water_line:
 nitt_water_legend.set_visible(False)
 nitt_bed_line, = plt.plot(L/1000*mou - nitt_bed.data[:,0], nitt_bed.data[:,1],
                          '.', color='grey', visible=False)
-Qw_val = plt.text(0.7, 0.9, "Qw = " + utils.format_number(Qw), transform=ax.transAxes)
+Qw_val = plt.text(0.65, 0.85, "Qw = " + utils.format_number(Qw),
+                  fontsize=16, transform=ax.transAxes, 
+                  bbox=dict(facecolor='white'))
 Bw_val = plt.text(( (Xs[1]-Xs[0])/4 + Xs[0])/1000, 52, \
     "backwater from \n" + "RK " + str(L*mou/1000-round(Xs[0]/1000)) + " to " + str(L*mou/1000-round(Xs[1]/1000)), \
     horizontalalignment="center", backgroundcolor="white")
