@@ -65,6 +65,8 @@ ax.set_xlabel("distance from Head of Passes (km)")
 ax.set_ylabel("elevation (m)")
 plt.ylim(-50, 100)
 plt.xlim(L/1000*0.25, L/1000-(L/1000*0.125))
+# plt.xticks([1,2,3,4],['Q1','Q2','Q3','Q4'])
+ax.xaxis.set_major_formatter( plt.FuncFormatter(lambda v, x: int(-1*(v - (L/1000*mou)))) )
 # set(hand.ax, 'xTickLabels', cellfun(@num2str, num2cell(abs((cellfun(@str2num, (get(gca, 'XTickLabels')))) - (L/1000*mou))), 'UniformOutput', false))
 
 
