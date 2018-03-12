@@ -57,14 +57,14 @@ nitt_water.seldata = nitt_water.data[:, nitt_water_dict_idx.flatten()]
 plt.rcParams['toolbar'] = 'None'
 plt.rcParams['figure.figsize'] = 11, 7
 fig, ax = plt.subplots()
+fig.canvas.set_window_title('SedEdu -- Flooding in low-lying landscapes')
 plt.subplots_adjust(left=0.075, bottom=0.5, top=0.95, right=0.95)
 background_color = 'white'
 ax.set_xlabel("distance from Head of Passes (km)")
 ax.set_ylabel("elevation (m)")
 plt.ylim(-50, 100)
 plt.xlim(L/1000*0.25, L/1000-(L/1000*0.125))
-ax.xaxis.set_major_formatter( plt.FuncFormatter(
-                             lambda v, x: int(-1*(v - (L/1000*mou)))) )
+ax.xaxis.set_major_formatter( plt.FuncFormatter(lambda v, x: int(-1*(v - (L/1000*mou)))) )
 
 # add plot elements
 RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)),
