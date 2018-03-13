@@ -10,9 +10,15 @@ def format_number(number):
 
 def format_table(number):
     integer = (round(number, 1))
-    # string = "{:,}".format(integer)
     string = str(integer)
     return(string)
+
+def format_polyvects(x0, eta0, H0):
+    x0_v = (x0.transpose())
+    x = np.hstack((x0_v, np.flipud(x0_v)))
+    y = np.hstack((eta0, np.flipud(eta0+H0)))
+    xy = np.column_stack((x, y))
+    return xy
 
 class MinMaxSlider(AxesWidget):
     """

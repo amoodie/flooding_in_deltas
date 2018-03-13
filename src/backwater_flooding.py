@@ -11,6 +11,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.widgets as widget
+import matplotlib.patches as ptch
 import channel, hydro, utils
 
 # SET PARAMETERS
@@ -72,7 +73,8 @@ RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)),
                    ls=':', lw=1.5, color='grey')
 eta_line, = plt.plot(x/1000, eta, lw=2, color='black') # plot bed
 zed_line = plt.plot(x[:mouIdx]/1000, eta[:mouIdx]+zed[:mouIdx], 'k--', lw=1.2) # plot levee
-water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial condition
+water_line, = plt.plot(x/1000, eta+H, lw=2, color='steelblue') # plot initial condition
+water_shade = ax.add_patch(ptch.Polygon(utils.format_polyvects(x/1000, eta, H), facecolor='powderblue'))
 RK_labels = [plt.text(x, y, '< '+s, backgroundcolor='white') 
                                for x, y, s in zip(L/1000*mou - RKs + 6, 
                                [6, 20, 70, 80, 90], # 85-np.arange(0,np.size(RKs))*5 
@@ -141,6 +143,7 @@ def update(val):
     Xs = hydro.find_backwaterregion(H, dx)
     
     water_line.set_ydata(eta + H)
+    water_shade.set_xy(utils.format_polyvects(x/1000, eta, H))
     Qw_val.set_text("Qw = " + utils.format_number(Qw))
     Bw_val.set_text("backwater from \n" + "RK " + str(int(L*mou/1000-Xs[0]/1000)) + \
         " to " + str(int(L*mou/1000-Xs[1]/1000)))
