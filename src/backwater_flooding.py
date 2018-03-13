@@ -11,10 +11,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.widgets as widget
+import matplotlib.patches as ptch
 import channel, hydro, utils
 
 # SET PARAMETERS
-# def rootInit():
 L = 1600e3 # length of domain
 nx = 400 # number of nodes
 dx = L / nx # width of cells
@@ -45,44 +45,43 @@ Qwmin = 5000
 
 H = hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qw, nx, dx)
 Xs = hydro.find_backwaterregion(H, dx)
-zed = 0.5 + hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qwbf, nx, dx)
+zed = 0.5 + -1e-5*(x - (L*mou)) + hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qwbf, nx, dx)
 
 nitt_bed, nitt_water = channel.load_nitt()
 nitt_water_dict = [{'10,000 m$^3$/s':nitt_water.hdr.index('f5k_10k')},
                    {'20,000 m$^3$/s':nitt_water.hdr.index('f15k_20k')},
                    {'35,000 m$^3$/s':nitt_water.hdr.index('f30k_35k')}]
 nitt_water_dict_idx = np.array( [ list(d.values()) for d in nitt_water_dict ] )
-# nitt_water.seldata = nitt_water.data[:, [int(v) for v in nitt_water_dict.values()]]
 nitt_water.seldata = nitt_water.data[:, nitt_water_dict_idx.flatten()]
 
 # setup the figure
 plt.rcParams['toolbar'] = 'None'
 plt.rcParams['figure.figsize'] = 11, 7
 fig, ax = plt.subplots()
+fig.canvas.set_window_title('SedEdu -- Flooding in low-lying landscapes')
 plt.subplots_adjust(left=0.075, bottom=0.5, top=0.95, right=0.95)
 background_color = 'white'
 ax.set_xlabel("distance from Head of Passes (km)")
 ax.set_ylabel("elevation (m)")
 plt.ylim(-50, 100)
 plt.xlim(L/1000*0.25, L/1000-(L/1000*0.125))
-# plt.xticks([1,2,3,4],['Q1','Q2','Q3','Q4'])
 ax.xaxis.set_major_formatter( plt.FuncFormatter(lambda v, x: int(-1*(v - (L/1000*mou)))) )
-# set(hand.ax, 'xTickLabels', cellfun(@num2str, num2cell(abs((cellfun(@str2num, (get(gca, 'XTickLabels')))) - (L/1000*mou))), 'UniformOutput', false))
-
 
 # add plot elements
-RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)), 
+RK_line = plt.plot(np.tile(L/1000*mou - RKs, (2, 1)),
                    np.tile(np.array([-50, 100]), (np.size(RKs), 1)).transpose(), 
                    ls=':', lw=1.5, color='grey')
 eta_line, = plt.plot(x/1000, eta, lw=2, color='black') # plot bed
+eta_shade = ax.add_patch(ptch.Polygon(utils.format_polyvects(
+                         x/1000, x/1000, -50*np.ones(np.size(eta)), eta),
+                         facecolor='saddlebrown'))
 zed_line = plt.plot(x[:mouIdx]/1000, eta[:mouIdx]+zed[:mouIdx], 'k--', lw=1.2) # plot levee
-water_line, = plt.plot(x/1000, eta+H, lw=2, color='blue') # plot initial condition
-# RK_labels = plt.text(np.tile(L/1000*mou - RKs, (2, 1)), 
-#                      np.tile(np.array([-40]),np.size(RKs)),
-#                      )
+water_line, = plt.plot(x/1000, eta+H, lw=2, color='steelblue') # plot initial condition
+water_shade = ax.add_patch(ptch.Polygon(utils.format_polyvects(
+                           x/1000, x/1000, eta, eta+H), facecolor='powderblue'))
 RK_labels = [plt.text(x, y, '< '+s, backgroundcolor='white') 
                                for x, y, s in zip(L/1000*mou - RKs + 6, 
-                               [40, 50, 70, 80, 90], # 85-np.arange(0,np.size(RKs))*5 
+                               [6, 20, 70, 80, 90], # 85-np.arange(0,np.size(RKs))*5 
                                RKnames)]
 ax.set_prop_cycle(plt.cycler('color', ['green', 'gold', 'red']))
 nitt_water_line = plt.plot(np.tile((L/1000*mou - np.array(nitt_water.RK)).transpose(), (1,3)),
@@ -94,11 +93,12 @@ for l in nitt_water_line:
 nitt_water_legend.set_visible(False)
 nitt_bed_line, = plt.plot(L/1000*mou - nitt_bed.data[:,0], nitt_bed.data[:,1],
                          '.', color='grey', visible=False)
-Qw_val = plt.text(0.65, 0.85, "Qw = " + utils.format_number(Qw),
+Qw_val = plt.text(0.05, 0.85, "Qw = " + utils.format_number(Qw),
                   fontsize=16, transform=ax.transAxes, 
                   backgroundcolor='white')
-Bw_val = plt.text(( (Xs[1]-Xs[0])/4 + Xs[0])/1000, 52, \
-    "backwater from \n" + "RK " + str(int(L*mou/1000-Xs[0]/1000)) + " to " + str(int(L*mou/1000-Xs[1]/1000)), \
+Bw_val = plt.text(( (Xs[1]-Xs[0])/2 + Xs[0])/1000, 45, 
+    "backwater from \n" + "RK " + str(int(L*mou/1000-Xs[0]/1000)) +
+    " to " + str(int(L*mou/1000-Xs[1]/1000)), 
     horizontalalignment="center", backgroundcolor="white")
 Bw_brack, = plt.plot(np.array([Xs[0], Xs[0], Xs[1], Xs[1]])/1000, np.array([36, 40, 40, 36]), 'k-', lw=1.2)
 
@@ -146,11 +146,12 @@ def update(val):
     H = hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qw, nx, dx)
     Xs = hydro.find_backwaterregion(H, dx)
     
-    water_line.set_ydata(eta+H)
+    water_line.set_ydata(eta + H)
+    water_shade.set_xy(utils.format_polyvects(x/1000, x/1000, eta, eta+H))
     Qw_val.set_text("Qw = " + utils.format_number(Qw))
     Bw_val.set_text("backwater from \n" + "RK " + str(int(L*mou/1000-Xs[0]/1000)) + \
         " to " + str(int(L*mou/1000-Xs[1]/1000)))
-    Bw_val.set_x(((Xs[1]-Xs[0])/4 + Xs[0])/1000)
+    Bw_val.set_x(((Xs[1]-Xs[0])/2 + Xs[0])/1000)
     Bw_brack.set_xdata(np.array([Xs[0], Xs[0], Xs[1], Xs[1]])/1000)
 
     # update table
