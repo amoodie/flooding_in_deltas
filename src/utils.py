@@ -13,10 +13,9 @@ def format_table(number):
     string = str(integer)
     return(string)
 
-def format_polyvects(x0, eta0, H0):
-    x0_v = (x0.transpose())
-    x = np.hstack((x0_v, np.flipud(x0_v)))
-    y = np.hstack((eta0, np.flipud(eta0+H0)))
+def format_polyvects(x1, x2, y1, y2):
+    x = np.hstack((x1, np.flipud(x2)))
+    y = np.hstack((y1, np.flipud(y2)))
     xy = np.column_stack((x, y))
     return xy
 
