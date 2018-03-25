@@ -8,7 +8,7 @@ This repository is also linked into the [SedEdu suite of education modules](http
 
 A Matlab version of this module exists [here](https://github.com/amoodie/research_outreach/tree/master/flooding_risk).
 
-![demo image](./private/gui_demo.png "Demo of GUI")
+![demo image](./private/gui_demo.png "Demo of GUI")<!-- .element height="50%" width="50%" -->
 
 ## Installation and running the module
 
