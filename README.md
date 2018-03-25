@@ -6,7 +6,7 @@ This readme file provides an overview of the installation and setup process, as 
 
 This repository is also linked into the [SedEdu suite of education modules](https://github.com/amoodie/sededu), and can be accessed there as well.
 
-A Matlab version of this module exists [here](https://github.com/amoodie/research_outreach/tree/master/flooding_risk.
+A Matlab version of this module exists [here](https://github.com/amoodie/research_outreach/tree/master/flooding_risk).
 
 ![demo image](./private/gui_demo.png "Demo of GUI")
 
