@@ -45,7 +45,8 @@ Qwmin = 5000
 
 H = hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qw, nx, dx)
 Xs = hydro.find_backwaterregion(H, dx)
-zed = 0.5 + -1e-5*(x - (L*mou)) + hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qwbf, nx, dx)
+# zed = 0.5 + -1e-5*(x - (L*mou)) + hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qwbf, nx, dx)
+zed = 0.5 + hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qwbf, nx, dx)
 
 nitt_bed, nitt_water = channel.load_nitt()
 nitt_water_dict = [{'10,000 m$^3$/s':nitt_water.hdr.index('f5k_10k')},
@@ -114,21 +115,23 @@ slide_Qw = utils.MinMaxSlider(ax_Qw, 'water discharge (m$^3$/s)', Qwmin, Qwmax,
 ax_overTable = plt.axes([0.20, 0.1, 0.5, 0.1], frameon=False, xticks=[], yticks=[])
 tabData = [['0', '0', False], ['0', '0', False],
            ['0', '0', False], ['0', '0', False],
-           ['0', '0', False]];
+           ['0', '0', False]]
 tabRowName = RKnames
 tabColName = ['flow depth (m)', 'stage (m)', 'over levee?'];
 overTable = plt.table(cellText=tabData, rowLabels=tabRowName,
                       colLabels=tabColName, colWidths=[0.3, 0.2, 0.2],
                       loc="center")
-overTable.scale(1, 1.5) # xscale, yscale
-[ overTable._cells[(c, 0)]._text.set_text(utils.format_table(HRK))
-    for c, HRK in zip(np.arange(1,6), H[RKidxs]) ] # insert flow depth values
-[ overTable._cells[(c, 1)]._text.set_text(utils.format_table(StRK))
-    for c, StRK in zip(np.arange(1,6), H[RKidxs]+eta[RKidxs]) ] # insert stage values
-[ overTable._cells[(c, 2)]._text.set_text(str(ObRK))
-    for c, ObRK in zip(np.arange(1,6), 
-    H[RKidxs]+eta[RKidxs] > eta[RKidxs]+zed[RKidxs]) ] # insert flow depth values
-    
+overTable.scale(1, 1.5) # xscale, yscale 
+for tab_row in np.arange(1, np.size(tabData,0)+1):
+    vect_idx = tab_row - 1
+    H_val = H[RKidxs[vect_idx]]
+    overTable._cells[(tab_row, 0)]._text.set_text(utils.format_table_number(H_val))
+    stage_val = H[RKidxs[vect_idx]]+ eta[RKidxs[vect_idx]]
+    overTable._cells[(tab_row, 1)]._text.set_text(utils.format_table_number(stage_val))
+    over_val = H[RKidxs[vect_idx]] + eta[RKidxs[vect_idx]]   >   eta[RKidxs[vect_idx]] + zed[RKidxs[vect_idx]]
+    overTable._cells[(tab_row, 2)]._text.set_text(str(over_val))
+    overTable._cells[(tab_row, 2)]._text.set_color(utils.format_table_color(over_val))
+
 
 # add gui buttons
 chk_data_ax = plt.axes([0.75, 0.25, 0.15, 0.15], facecolor=background_color)
@@ -146,6 +149,7 @@ def update(val):
     H = hydro.get_backwater_dBdx(eta, S, B, H0, Cf, Qw, nx, dx)
     Xs = hydro.find_backwaterregion(H, dx)
     
+    # update the artists in the window
     water_line.set_ydata(eta + H)
     water_shade.set_xy(utils.format_polyvects(x/1000, x/1000, eta, eta+H))
     Qw_val.set_text("Qw = " + utils.format_number(Qw))
@@ -153,15 +157,17 @@ def update(val):
         " to " + str(int(L*mou/1000-Xs[1]/1000)))
     Bw_val.set_x(((Xs[1]-Xs[0])/2 + Xs[0])/1000)
     Bw_brack.set_xdata(np.array([Xs[0], Xs[0], Xs[1], Xs[1]])/1000)
+    for tab_row in np.arange(1, np.size(tabData,0)+1):
+        vect_idx = tab_row - 1
+        H_val = H[RKidxs[vect_idx]]
+        overTable._cells[(tab_row, 0)]._text.set_text(utils.format_table_number(H_val))
+        stage_val = H[RKidxs[vect_idx]]+ eta[RKidxs[vect_idx]]
+        overTable._cells[(tab_row, 1)]._text.set_text(utils.format_table_number(stage_val))
+        over_val = H[RKidxs[vect_idx]] + eta[RKidxs[vect_idx]]   >   eta[RKidxs[vect_idx]] + zed[RKidxs[vect_idx]]
+        overTable._cells[(tab_row, 2)]._text.set_text(str(over_val))
+        overTable._cells[(tab_row, 2)]._text.set_color(utils.format_table_color(over_val))
 
-    # update table
-    [ overTable._cells[(c, 0)]._text.set_text(utils.format_table(HRK)) 
-    for c, HRK in zip(np.arange(1,6), H[RKidxs]) ] # insert flow depth values
-    [ overTable._cells[(c, 1)]._text.set_text(utils.format_table(StRK)) 
-        for c, StRK in zip(np.arange(1,6), H[RKidxs]+eta[RKidxs]) ] # insert stage values
-    [ overTable._cells[(c, 2)]._text.set_text(str(ObRK)) 
-        for c, ObRK in zip(np.arange(1,6), 
-        H[RKidxs]+eta[RKidxs] > eta[RKidxs]+zed[RKidxs]) ] # insert flow depth values
+    # redraw the canvas
     fig.canvas.draw_idle()
 
 
@@ -192,10 +198,3 @@ btn_reset.on_clicked(reset)
 
 # show the results
 plt.show()
-
-
-# if __name__ == '__main__':
-#     # app = QApplication(sys.argv)
-#     root = rootInit()
-#     # root.show()
-#     # sys.exit(app.exec_())
