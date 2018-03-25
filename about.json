@@ -5,7 +5,8 @@
     "version": "0.1",
     "projurl": "",
     "projreadme": ["README.md"],
-    "preview": ["private", "guidemo_gif.gif"],
+    "difficulty": 7,
+    "preview": ["private", "gui_demo.png"],
     "exec": ["src", "backwater_flooding.py"],
     "docloc": ["docs"],
     "doclist": {
