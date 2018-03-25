@@ -1,4 +1,4 @@
-# Flooding in deltas
+# Flooding in deltas educational module
 
 This flooding risk module is intended to help educators demonstrate some basic physics of why rivers flood. A computer code with a fully interactive graphical user interface module (GUI) is interacted with alongside worksheets designed for students of varying ages.
 
