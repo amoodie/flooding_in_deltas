@@ -3,6 +3,7 @@
     "author": "Andrew J. Moodie",
     "shortdesc": "Explore what flooding looks like in a delta",
     "version": "0.1",
+    "license": "MIT",
     "projurl": "[https://github.com/amoodie/flooding_in_deltas](github.com/.../flooding_in_deltas)",
     "projreadme": ["README.md"],
     "difficulty": 7,
